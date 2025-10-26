@@ -17,7 +17,6 @@ MAX_SAMPLES = 40000
 FRAGMENT_SIZE = 800
 FRAGMENT_OVERLAP = 400
 SAVE_INTERMEDIATE = True
-FRAG_DIR = Path("fragments")
 
 
 # ==== Output Configuration ====
@@ -25,6 +24,7 @@ OUTPUT_DIR = Path("output")
 OUTPUT_PLY = OUTPUT_DIR / "registered_colored_cloud_fragments.ply"
 OUTPUT_CONCAT_PLY = OUTPUT_DIR / "concatenated_colored_cloud.ply"
 VERBOSE = False
+FRAG_DIR = OUTPUT_DIR / "fragments"
 
 
 # ==== Registration Parameters ====

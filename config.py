@@ -21,6 +21,7 @@ FRAG_DIR = Path("fragments")
 
 # ==== Output Configuration ====
 OUTPUT_PLY = "registered_colored_cloud_fragments.ply"
+VERBOSE = False
 
 
 # ==== Registration Parameters ====

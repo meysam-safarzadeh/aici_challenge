@@ -102,7 +102,8 @@ def fuse_fragment(colored_clouds, nodes_poses, frag_range, voxel_merge=0.02):
 
 def build_local_fragment(colored_clouds, frag_range, odom_poses=None, 
                         voxel_size=VOXEL_SIZE, 
-                        max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE):
+                        max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE,
+                        verbose=False):
     """
     Build a single fragment with local pose graph optimization.
     
@@ -130,7 +131,7 @@ def build_local_fragment(colored_clouds, frag_range, odom_poses=None,
     
     # Local registration with colored ICP
     local_pg = full_registration(pcds_std, voxel_size, max_correspondence_distance, 
-                                 initial_poses)
+                                 initial_poses, verbose)
     local_pg = optimize_pose_graph(local_pg, max_correspondence_distance, 
                                    preference_loop_closure=0.7)
     

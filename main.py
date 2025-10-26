@@ -1,22 +1,6 @@
-"""
-Fragment-based 3D reconstruction pipeline for LiDAR-RGB data.
-
-This script implements a multi-stage reconstruction approach:
-1. Load and colorize point clouds from ROS2 bag
-2. Split into overlapping fragments based on time gaps
-3. Build and optimize local pose graphs for each fragment
-4. Register fragments into global coordinate system
-5. Merge and save final reconstructed point cloud
-"""
-
 import copy
 import open3d as o3d
-from config import (
-    BAG_DIR, RGB_TOPIC, LIDAR_TOPIC, ODOM_TOPIC, MAX_SAMPLES,
-    FRAGMENT_SIZE, FRAGMENT_OVERLAP, FRAG_DIR, OUTPUT_PLY,
-    K, DIST_COEFFS, T_CAM_LIDAR, VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE,
-    SAVE_INTERMEDIATE, ensure_output_dirs
-)
+from config import *
 from io_utils import read_rosbag, create_colored_clouds, save_point_cloud
 from fragments import (split_into_fragments, build_local_fragment, 
                        register_fragments)
@@ -58,7 +42,9 @@ def main():
     
     for frag_id, fr in enumerate(frag_ranges):
         frag_cloud, pcds_std, local_pg = build_local_fragment(
-            colored_clouds, fr, odom_poses, VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE)
+            colored_clouds, fr, odom_poses, VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE,
+            VERBOSE
+            )
         local_pose_graphs.append(local_pg)
         
         # Save intermediate fragment
@@ -74,7 +60,7 @@ def main():
     
     # Step 5: Register fragments globally
     frag_pg = register_fragments(fragment_representatives, VOXEL_SIZE, 
-                                 MAX_CORRESPONDENCE_DISTANCE)
+                                 MAX_CORRESPONDENCE_DISTANCE, VERBOSE)
     frag_global_poses = [node.pose for node in frag_pg.nodes]
     
     # Step 6: Merge fragments into final point cloud

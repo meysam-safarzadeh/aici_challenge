@@ -27,10 +27,24 @@ This gives us:
 - **cx, cy** = (649.565, 368.822) (principal point)
 
 #### LiDAR to Camera Transform
-The extrinsic transform was calculated from the `/tf_static` topic in the ROS2 bag. We compute the transform that maps LiDAR points into the camera optical frame:
+The extrinsic transform was calculated from the `/tf_static` topic in the ROS2 bag. This transform maps LiDAR points into the camera optical frame.
+
+**Transform Chain Analysis:**
+
+Since most rotations in the sensor chain are identity matrices (except for the camera→optical conversion), the transform chain simplifies as follows:
+
+```
+base ← livox:        R = I,  t = [0.000,  0.000,  0.215]
+base ← zed_link:     R = I,  t = [0.099,  0.000,  0.180]
+base ← center:       R = I,  t = [0.000,  0.000, +0.015]  (offset)
+base ← left_frame:   R = I,  t = [-0.010, 0.060,  0.000]  (offset)
+left_frame ← left_optical:   q = (0.5, -0.5, 0.5, -0.5)  (90° rotations)
+```
+
+**Final Transform Equation:**
 
 $$
-\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{cam}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{lidar}}}
+\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{left\_optical}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{livox}}}
 $$
 
 Where each $T_{\text{parent} \leftarrow \text{child}}$ is a 4×4 homogeneous transform (rotation + translation) that converts coordinates from the child frame into the parent frame.
@@ -164,13 +178,6 @@ docker run \
     --max-samples 50000
 ```
 
-**With memory limit** (if processing large datasets):
-```bash
-docker run --memory=8g \
-    -v /home/challenge_aici/office:/data \
-    -v $(pwd)/output:/app/output \
-    3d-reconstruction --bag-dir /data/rosbag2_2025_10_20-16_09_39
-```
 
 #### Docker Volume Mounts
 - `-v /path/to/rosbag:/data` - Mount your ROS2 bag directory
@@ -226,9 +233,3 @@ Advanced configuration can be modified in `config.py`:
 - **Memory**: Processing large datasets may require significant RAM. Consider reducing `--max-samples` or `--fragment-size` for memory-constrained environments.
 - **Performance**: Adjust `--voxel-size` to balance quality vs. processing time. Larger values = faster but lower quality.
 - **Loop Closures**: Increase `--loop-closure-interval` for faster processing or decrease for better accuracy in environments with many revisits.
-
----
-
-## License
-
-[Add your license information here]

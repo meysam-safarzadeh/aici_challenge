@@ -194,7 +194,7 @@ Simple concatenation of all colored point clouds using odometry-based transforma
 
 📥 **Sample Results:**
 - **Office Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
-- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
+- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/1fqjW0edVtHSJeb-BJVY5RHgPcMT--8LE/view?usp=drive_link)
 
 ### 2. Registered & Optimized Point Cloud
 **File:** `registered_colored_cloud_fragments.ply`
@@ -203,7 +203,7 @@ Globally registered and optimized point cloud using fragment-based multiway regi
 
 📥 **Sample Results:**
 - **Office Scene:** [Download from Google Drive](https://drive.google.com/file/d/1TCsP8TXj-882Xmx3_HmOHLyazZ1Z67TO/view?usp=drive_link)
-- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
+- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/19hW9J1_a_cf20HbRDeNWB6dkX72LOTPW/view?usp=drive_link)
 
 ### Additional Outputs
 If `SAVE_INTERMEDIATE=True` in `config.py`:

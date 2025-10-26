@@ -29,14 +29,14 @@ def main() -> None:
     
     # step 3: Concatenate point clouds and save
     print(f"\nConcatenating {len(colored_clouds)} colored point clouds...")
-    final_cloud = colored_clouds[0]
-    for pcd in colored_clouds[1:]:
-        final_cloud += pcd
+    concatenated_point_cloud = copy.deepcopy(colored_clouds[0])
+    for colored_point_cloud in colored_clouds[1:]:
+        concatenated_point_cloud += colored_point_cloud
     
     # Save the final concatenated point cloud
-    o3d.io.write_point_cloud(OUTPUT_CONCAT_PLY, final_cloud)
+    o3d.io.write_point_cloud(OUTPUT_CONCAT_PLY, concatenated_point_cloud)
     print(f"\n✓ Saved concatenated colored point cloud to '{OUTPUT_CONCAT_PLY}'")
-    print(f"  Total points: {len(final_cloud.points)}")
+    print(f"  Total points: {len(concatenated_point_cloud.points)}")
 
     # Step 4: Split into fragments
     print("\n" + "=" * 70)

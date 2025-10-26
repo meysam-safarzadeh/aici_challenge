@@ -4,9 +4,10 @@ import numpy as np
 import cv2
 import open3d as o3d
 import struct
+from typing import Optional, Tuple
 
 
-def parse_pointcloud2(msg):
+def parse_pointcloud2(msg: any) -> Optional[np.ndarray]:
     """
     Parse ROS2 PointCloud2 message to numpy array.
     
@@ -32,7 +33,7 @@ def parse_pointcloud2(msg):
     return np.array(points_list) if points_list else None
 
 
-def colorize_pointcloud(pts, img_bgr, K, dist, T_cam_lidar):
+def colorize_pointcloud(pts: np.ndarray, img_bgr: np.ndarray, K: np.ndarray, dist: np.ndarray, T_cam_lidar: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Project 3D points to image and assign colors.
     
@@ -82,7 +83,7 @@ def colorize_pointcloud(pts, img_bgr, K, dist, T_cam_lidar):
     return valid_points, colors_rgb
 
 
-def preprocess_point_cloud(pcd, voxel_size):
+def preprocess_point_cloud(pcd: o3d.geometry.PointCloud, voxel_size: float) -> o3d.geometry.PointCloud:
     """
     Downsample and estimate normals for point cloud.
     

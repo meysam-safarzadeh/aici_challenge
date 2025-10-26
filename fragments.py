@@ -3,13 +3,14 @@
 import numpy as np
 import open3d as o3d
 import copy
+from typing import Optional, List, Tuple
 from registration import (full_registration, optimize_pose_graph, 
                           colored_icp_registration, preprocess_point_cloud)
 from transforms import is_valid_transformation
 from config import VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE
 
 
-def split_into_fragments(n, frag_size, overlap, timestamps=None, gap_threshold_ns=1e9):
+def split_into_fragments(n: int, frag_size: int, overlap: int, timestamps: Optional[List[int]] = None, gap_threshold_ns: float = 1e9) -> List[Tuple[int, int]]:
     """
     Split data into overlapping fragments, optionally detecting time gaps.
     
@@ -72,7 +73,7 @@ def split_into_fragments(n, frag_size, overlap, timestamps=None, gap_threshold_n
     return ranges
 
 
-def fuse_fragment(colored_clouds, nodes_poses, frag_range, voxel_merge=0.02):
+def fuse_fragment(colored_clouds: List[o3d.geometry.PointCloud], nodes_poses: List[np.ndarray], frag_range: Tuple[int, int], voxel_merge: float = 0.02) -> o3d.geometry.PointCloud:
     """
     Transform and merge point clouds within a fragment.
     
@@ -100,10 +101,10 @@ def fuse_fragment(colored_clouds, nodes_poses, frag_range, voxel_merge=0.02):
     return merged
 
 
-def build_local_fragment(colored_clouds, frag_range, odom_poses=None, 
-                        voxel_size=VOXEL_SIZE, 
-                        max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE,
-                        verbose=False):
+def build_local_fragment(colored_clouds: List[o3d.geometry.PointCloud], frag_range: Tuple[int, int], odom_poses: Optional[List[np.ndarray]] = None, 
+                        voxel_size: float = VOXEL_SIZE, 
+                        max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
+                        verbose: bool = False) -> Tuple[o3d.geometry.PointCloud, List[o3d.geometry.PointCloud], o3d.pipelines.registration.PoseGraph]:
     """
     Build a single fragment with local pose graph optimization.
     
@@ -142,9 +143,9 @@ def build_local_fragment(colored_clouds, frag_range, odom_poses=None,
     return fragment_cloud, pcds_std, local_pg
 
 
-def register_fragments(fragment_reps, voxel_size=VOXEL_SIZE, 
-                      max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE,
-                      verbose=False):
+def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size: float = VOXEL_SIZE, 
+                      max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
+                      verbose: bool = False) -> o3d.pipelines.registration.PoseGraph:
     """
     Register fragment representatives into a global pose graph.
     

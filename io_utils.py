@@ -3,13 +3,15 @@
 import cv2
 import numpy as np
 import open3d as o3d
+from typing import Optional, Dict, Tuple, List
+from pathlib import Path
 from rosbags.highlevel import AnyReader
 from rosbags.typesys import Stores, get_typestore
 from pointcloud import parse_pointcloud2, colorize_pointcloud
 from transforms import pose_to_transform_matrix, compute_relative_transform
 
 
-def find_closest_timestamp(target_t, timestamp_dict):
+def find_closest_timestamp(target_t: int, timestamp_dict: Dict[int, any]) -> Optional[int]:
     """
     Find the closest timestamp in a dictionary.
     
@@ -26,7 +28,7 @@ def find_closest_timestamp(target_t, timestamp_dict):
     return closest_t
 
 
-def read_rosbag(bag_dir, rgb_topic, lidar_topic, odom_topic, max_samples):
+def read_rosbag(bag_dir: Path, rgb_topic: str, lidar_topic: str, odom_topic: str, max_samples: int) -> Tuple[Dict[int, np.ndarray], Dict[int, np.ndarray], Dict[int, np.ndarray]]:
     """
     Read RGB images, LiDAR point clouds, and odometry from ROS2 bag.
     
@@ -100,7 +102,7 @@ def read_rosbag(bag_dir, rgb_topic, lidar_topic, odom_topic, max_samples):
     return rgb_data, lidar_data, odom_data
 
 
-def create_colored_clouds(rgb_data, lidar_data, odom_data, K, dist, T_cam_lidar):
+def create_colored_clouds(rgb_data: Dict[int, np.ndarray], lidar_data: Dict[int, np.ndarray], odom_data: Dict[int, np.ndarray], K: np.ndarray, dist: np.ndarray, T_cam_lidar: np.ndarray) -> Tuple[List[o3d.geometry.PointCloud], List[np.ndarray], List[int]]:
     """
     Create colored point clouds from RGB and LiDAR data with odometry.
     
@@ -165,7 +167,7 @@ def create_colored_clouds(rgb_data, lidar_data, odom_data, K, dist, T_cam_lidar)
     return colored_clouds, odom_poses, cloud_timestamps
 
 
-def save_point_cloud(pcd, filepath):
+def save_point_cloud(pcd: o3d.geometry.PointCloud, filepath: Path) -> None:
     """
     Save point cloud to PLY file.
     

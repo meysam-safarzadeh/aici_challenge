@@ -2,12 +2,13 @@
 
 import numpy as np
 import open3d as o3d
+from typing import Optional, List, Tuple
 from transforms import is_valid_transformation
 from pointcloud import preprocess_point_cloud
 
 
-def colored_icp_registration(source, target, voxel_size, max_correspondence_distance, 
-                             init_transform=None, verbose=False):
+def colored_icp_registration(source: o3d.geometry.PointCloud, target: o3d.geometry.PointCloud, voxel_size: float, max_correspondence_distance: float, 
+                             init_transform: Optional[np.ndarray] = None, verbose: bool = False) -> Tuple[Optional[np.ndarray], Optional[o3d.pipelines.registration.RegistrationResult]]:
     """
     Perform colored ICP registration between source and target point clouds.
     
@@ -38,10 +39,10 @@ def colored_icp_registration(source, target, voxel_size, max_correspondence_dist
         return None, None
 
 
-def full_registration(pcds_down_standard, voxel_size, max_correspondence_distance, 
-                     initial_poses=None, min_fitness_consecutive=0.75, 
-                     min_fitness_loop=0.4, loop_closure_interval=15,
-                     loop_closure_distance_threshold=5, verbose=False):
+def full_registration(pcds_down_standard: List[o3d.geometry.PointCloud], voxel_size: float, max_correspondence_distance: float, 
+                     initial_poses: Optional[List[np.ndarray]] = None, min_fitness_consecutive: float = 0.75, 
+                     min_fitness_loop: float = 0.4, loop_closure_interval: int = 15,
+                     loop_closure_distance_threshold: int = 5, verbose: bool = False) -> o3d.pipelines.registration.PoseGraph:
     """
     Perform full pairwise registration with odometry edges and loop closures.
     
@@ -162,8 +163,8 @@ def full_registration(pcds_down_standard, voxel_size, max_correspondence_distanc
     return pose_graph
 
 
-def optimize_pose_graph(pose_graph, max_correspondence_distance, 
-                       preference_loop_closure=1.0):
+def optimize_pose_graph(pose_graph: o3d.pipelines.registration.PoseGraph, max_correspondence_distance: float, 
+                       preference_loop_closure: float = 1.0) -> o3d.pipelines.registration.PoseGraph:
     """
     Optimize pose graph using global optimization.
     

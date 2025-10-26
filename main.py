@@ -6,7 +6,7 @@ from fragments import (split_into_fragments, build_local_fragment,
                        register_fragments)
 
 
-def main():
+def main() -> None:
     """Main reconstruction pipeline."""
     print("=" * 70)
     print("FRAGMENT-BASED MULTIWAY REGISTRATION")

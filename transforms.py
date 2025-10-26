@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def quaternion_to_rotation_matrix(qx, qy, qz, qw):
+def quaternion_to_rotation_matrix(qx: float, qy: float, qz: float, qw: float) -> np.ndarray:
     """
     Convert quaternion to 3x3 rotation matrix.
     
@@ -26,7 +26,7 @@ def quaternion_to_rotation_matrix(qx, qy, qz, qw):
     return R
 
 
-def pose_to_transform_matrix(position, orientation):
+def pose_to_transform_matrix(position: any, orientation: any) -> np.ndarray:
     """
     Convert position and quaternion orientation to 4x4 transform matrix.
     
@@ -47,7 +47,7 @@ def pose_to_transform_matrix(position, orientation):
     return T
 
 
-def compute_relative_transform(T_current, T_origin):
+def compute_relative_transform(T_current: np.ndarray, T_origin: np.ndarray) -> np.ndarray:
     """
     Compute relative transform from origin to current pose.
     
@@ -63,7 +63,7 @@ def compute_relative_transform(T_current, T_origin):
     return T_rel
 
 
-def is_valid_transformation(transformation, max_translation=2.0, max_rotation_deg=45.0):
+def is_valid_transformation(transformation: np.ndarray, max_translation: float = 2.0, max_rotation_deg: float = 45.0) -> bool:
     """
     Validate transformation for reasonable translation and rotation bounds.
     

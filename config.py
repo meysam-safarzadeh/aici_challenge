@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import numpy as np
+from typing import Dict
 
 
 # ==== Data Sources ====
@@ -38,7 +39,7 @@ MIN_FITNESS_LOOP = 0.4
 
 
 # ==== Camera Intrinsics (Pinhole Model) ====
-CAMERA_INTRINSICS = {
+CAMERA_INTRINSICS: Dict[str, float] = {
     'fx': 524.73699951,
     'fy': 524.73699951,
     'cx': 649.56481934,
@@ -64,6 +65,6 @@ T_CAM_LIDAR = np.array([
 ], dtype=float)
 
 
-def ensure_output_dirs():
+def ensure_output_dirs() -> None:
     """Create necessary output directories."""
     FRAG_DIR.mkdir(parents=True, exist_ok=True)

@@ -27,7 +27,18 @@ def main() -> None:
     if N == 0:
         raise SystemExit("No valid colored clouds created.")
     
-    # Step 3: Split into fragments
+    # step 3: Concatenate point clouds and save
+    print(f"\nConcatenating {len(colored_clouds)} colored point clouds...")
+    final_cloud = colored_clouds[0]
+    for pcd in colored_clouds[1:]:
+        final_cloud += pcd
+    
+    # Save the final concatenated point cloud
+    o3d.io.write_point_cloud(OUTPUT_CONCAT_PLY, final_cloud)
+    print(f"\n✓ Saved concatenated colored point cloud to '{OUTPUT_CONCAT_PLY}'")
+    print(f"  Total points: {len(final_cloud.points)}")
+
+    # Step 4: Split into fragments
     print("\n" + "=" * 70)
     print("Splitting into fragments based on time gaps and size")
     print("=" * 70)
@@ -36,7 +47,7 @@ def main() -> None:
         gap_threshold_ns=1e9)
     print(f"\nPlanned {len(frag_ranges)} fragments: {frag_ranges}")
     
-    # Step 4: Build local fragments
+    # Step 5: Build local fragments
     fragment_clouds = []
     fragment_representatives = []
     local_pose_graphs = []
@@ -59,13 +70,13 @@ def main() -> None:
             max(VOXEL_SIZE * 2, 0.05))
         fragment_representatives.append(rep)
     
-    # Step 5: Register fragments globally
+    # Step 6: Register fragments globally
     frag_pg = register_fragments(
         fragment_representatives, VOXEL_SIZE,
         MAX_CORRESPONDENCE_DISTANCE, VERBOSE)
     frag_global_poses = [node.pose for node in frag_pg.nodes]
     
-    # Step 6: Merge fragments into final point cloud
+    # Step 7: Merge fragments into final point cloud
     print("\n" + "=" * 70)
     print("Applying fragment global poses and merging")
     print("=" * 70)

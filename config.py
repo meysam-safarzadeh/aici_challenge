@@ -14,14 +14,16 @@ MAX_SAMPLES = 40000
 
 
 # ==== Fragmenting Parameters ====
-FRAGMENT_SIZE = 1400
-FRAGMENT_OVERLAP = 700
+FRAGMENT_SIZE = 1200
+FRAGMENT_OVERLAP = 600
 SAVE_INTERMEDIATE = True
 FRAG_DIR = Path("fragments")
 
 
 # ==== Output Configuration ====
-OUTPUT_PLY = "registered_colored_cloud_fragments.ply"
+OUTPUT_DIR = Path("output")
+OUTPUT_PLY = OUTPUT_DIR / "registered_colored_cloud_fragments.ply"
+OUTPUT_CONCAT_PLY = OUTPUT_DIR / "concatenated_colored_cloud.ply"
 VERBOSE = False
 
 
@@ -68,3 +70,4 @@ T_CAM_LIDAR = np.array([
 def ensure_output_dirs() -> None:
     """Create necessary output directories."""
     FRAG_DIR.mkdir(parents=True, exist_ok=True)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

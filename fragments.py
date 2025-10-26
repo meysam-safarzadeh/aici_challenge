@@ -177,20 +177,20 @@ def register_fragments(fragment_reps, voxel_size=VOXEL_SIZE,
             fitness = result.fitness
             if not is_valid_transformation(T_refined, max_translation=800.0, 
                                           max_rotation_deg=600.0):
-                print(f"✗ invalid transform → identity edge")
+                print(f"✗ invalid transform → identity edge") if verbose else None
                 T_refined = np.eye(4)
                 info = np.identity(6) * 0.001
                 uncertain = True
             elif fitness < 0.2:
-                print(f"✗ low fitness={fitness:.3f} → weak edge")
+                print(f"✗ low fitness={fitness:.3f} → weak edge") if verbose else None
                 info = np.identity(6) * 0.1
                 uncertain = True
             else:
-                print(f"✓ fitness={fitness:.3f}, rmse={result.inlier_rmse:.3f}")
+                print(f"✓ fitness={fitness:.3f}, rmse={result.inlier_rmse:.3f}") if verbose else None
                 info = np.identity(6) * min(fitness * 2.0, 1.0)
                 uncertain = False
         else:
-            print(f"✗ registration failed → identity edge")
+            print(f"✗ registration failed → identity edge") if verbose else None
             T_refined = np.eye(4)
             info = np.identity(6) * 0.001
             uncertain = True
@@ -221,12 +221,12 @@ def register_fragments(fragment_reps, voxel_size=VOXEL_SIZE,
                     pg.edges.append(o3d.pipelines.registration.PoseGraphEdge(
                         i, j, T, information=np.identity(6) * info_weight, uncertain=True))
                     loop_added += 1
-                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✓")
+                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✓") if verbose else None
                 else:
-                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✗")
+                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✗") if verbose else None
             else:
-                print(f"    Loop {i}→{j}: registration failed ✗")
-    
+                print(f"    Loop {i}→{j}: registration failed ✗") if verbose else None
+
     print(f"  Added {loop_added} loop closure edges")
     pg = optimize_pose_graph(pg, max_correspondence_distance, 
                             preference_loop_closure=2)

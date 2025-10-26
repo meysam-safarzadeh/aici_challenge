@@ -4,7 +4,7 @@ A fragment-based multiway registration system for creating colored 3D point clou
 
 ## Approach
 
-This pipeline implements a robust 3D reconstruction approach using fragment-based registration to handle large-scale datasets efficiently:
+This pipeline implements a colorization, concatination, and 3D reconstruction approach using fragment-based registration to handle large-scale datasets efficiently:
 
 ### 0. Calibration Setup
 
@@ -55,7 +55,7 @@ The resulting transform is hardcoded in `config.py` as `T_CAM_LIDAR`.
   - **RGB images** (`/zed/zed_node/rgb/image_rect_color/compressed`) - Color information
   - **Odometry** (`/odom`) - Initial pose estimates
 - Projects RGB colors onto LiDAR points using calibrated camera intrinsics and extrinsics
-- Creates colored point clouds with odometry-based poses
+- Creates concatenated colored point clouds with odometry-based poses
 
 ### 2. Fragment-Based Processing
 Rather than processing all frames at once (which would be memory-intensive and error-prone), the pipeline:
@@ -183,15 +183,33 @@ docker run \
 
 ---
 
-## Output
+## Results (Output)
 
 The pipeline generates two main output files in the `output/` directory:
 
-1. **`concatenated_colored_cloud.ply`** - Simple concatenation of all colored point clouds
-2. **`registered_colored_cloud_fragments.ply`** - Globally registered and optimized point cloud
+### 1. Concatenated Colored Point Cloud
+**File:** `concatenated_colored_cloud.ply`
 
-Additional outputs (if `SAVE_INTERMEDIATE=True` in config):
-- `fragments/fragment_XXX.ply` - Individual fragment point clouds
+Simple concatenation of all colored point clouds using odometry-based transformations.
+
+📥 **Sample Results:**
+- **Office Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
+- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
+
+### 2. Registered & Optimized Point Cloud
+**File:** `registered_colored_cloud_fragments.ply`
+
+Globally registered and optimized point cloud using fragment-based multiway registration with pose graph optimization.
+
+📥 **Sample Results:**
+- **Office Scene:** [Download from Google Drive](https://drive.google.com/file/d/1TCsP8TXj-882Xmx3_HmOHLyazZ1Z67TO/view?usp=drive_link)
+- **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/1KxbPKK8zu77UDoXD6yrZg4giM49Rduyk/view?usp=drive_link)
+
+### Additional Outputs
+If `SAVE_INTERMEDIATE=True` in `config.py`:
+- `fragments/fragment_000.ply` - Individual fragment point clouds
+- `fragments/fragment_001.ply`
+- `fragments/fragment_00N.ply`
 
 ---
 
@@ -220,8 +238,8 @@ Advanced configuration can be modified in `config.py`:
 │   ├── pointcloud.py     # Point cloud utilities
 │   ├── registration.py   # ICP and pose graph optimization
 │   └── transforms.py     # Transformation utilities
-├── fragments/            # Intermediate fragment outputs
-└── output/              # Final reconstruction outputs
+│── output/               # Final reconstruction outputs
+└   └── fragments/        # Intermediate fragment outputs
 ```
 
 ---

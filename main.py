@@ -1,8 +1,8 @@
 import copy
 import open3d as o3d
 from config import *
-from io_utils import read_rosbag, create_colored_clouds, save_point_cloud
-from fragments import (split_into_fragments, build_local_fragment, 
+from core.io_utils import read_rosbag, create_colored_clouds, save_point_cloud
+from core.fragments import (split_into_fragments, build_local_fragment, 
                        register_fragments)
 
 

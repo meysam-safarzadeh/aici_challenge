@@ -3,8 +3,8 @@
 import numpy as np
 import open3d as o3d
 from typing import Optional, List, Tuple
-from transforms import is_valid_transformation
-from pointcloud import preprocess_point_cloud
+from core.transforms import is_valid_transformation
+from core.pointcloud import preprocess_point_cloud
 
 
 def colored_icp_registration(

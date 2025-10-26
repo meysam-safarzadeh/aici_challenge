@@ -4,9 +4,9 @@ import numpy as np
 import open3d as o3d
 import copy
 from typing import Optional, List, Tuple
-from registration import (full_registration, optimize_pose_graph, 
+from core.registration import (full_registration, optimize_pose_graph, 
                           colored_icp_registration, preprocess_point_cloud)
-from transforms import is_valid_transformation
+from core.transforms import is_valid_transformation
 from config import VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE
 
 

@@ -44,10 +44,8 @@ left_frame ← left_optical:   q = (0.5, -0.5, 0.5, -0.5)  (90° rotations)
 **Final Transform Equation:**
 
 $$
-\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{left_opt}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{lidar_livox}}}
+\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{cam}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{lidar}}}
 $$
-
-Where each $T_{\text{parent} \leftarrow \text{child}}$ is a 4×4 homogeneous transform (rotation + translation) that converts coordinates from the child frame into the parent frame.
 
 The resulting transform is hardcoded in `config.py` as `T_CAM_LIDAR`.
 

@@ -127,7 +127,7 @@ python main.py --help
 |-----------|---------|-------------|
 | `--bag-dir` | **Required** | Path to ROS2 bag directory |
 | `--max-samples` | 40000 | Maximum number of samples to process |
-| `--fragment-size` | 800 | Size of each fragment |
+| `--fragment-size` | 800 | Size of each fragment (set it to 1400 for bathroom scene for better result!) |
 | `--fragment-overlap` | 400 | Overlap between fragments |
 | `--voxel-size` | 0.04 | Voxel size for downsampling |
 | `--voxel-size-fast` | 0.06 | Voxel size for fast processing |

@@ -44,7 +44,7 @@ left_frame ← left_optical:   q = (0.5, -0.5, 0.5, -0.5)  (90° rotations)
 **Final Transform Equation:**
 
 $$
-\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{cam}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{lidar}}}
+\boxed{T_{\text{cam} \leftarrow \text{lidar}} = \left(T_{\text{base} \leftarrow \text{left opt}}\right)^{-1} \cdot T_{\text{base} \leftarrow \text{lidar livox}}}
 $$
 
 The resulting transform is hardcoded in `config.py` as `T_CAM_LIDAR`.

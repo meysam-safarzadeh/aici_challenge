@@ -203,6 +203,9 @@ Globally registered and optimized point cloud using fragment-based multiway regi
 
 📥 **Sample Results:**
 - **Office Scene:** [Download from Google Drive](https://drive.google.com/file/d/1TCsP8TXj-882Xmx3_HmOHLyazZ1Z67TO/view?usp=drive_link)
+  
+  > ⚠️ **Note:** This office scene had some cuts in data recordings and the data was not smooth and continuous. This resulted in suboptimal final registration. Using more robust global registration methods like RANSAC could improve results to some extent.
+
 - **Bathroom Scene:** [Download from Google Drive](https://drive.google.com/file/d/19hW9J1_a_cf20HbRDeNWB6dkX72LOTPW/view?usp=drive_link)
 
 ### Additional Outputs

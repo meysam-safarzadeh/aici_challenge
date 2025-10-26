@@ -157,7 +157,7 @@ def build_local_fragment(
     # Local registration with colored ICP
     local_pg = full_registration(
         pcds_std, voxel_size, max_correspondence_distance,
-        initial_poses, verbose)
+        initial_poses, verbose=verbose)
     local_pg = optimize_pose_graph(
         local_pg, max_correspondence_distance,
         preference_loop_closure=0.7)

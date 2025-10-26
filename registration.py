@@ -7,7 +7,7 @@ from pointcloud import preprocess_point_cloud
 
 
 def colored_icp_registration(source, target, voxel_size, max_correspondence_distance, 
-                             init_transform=None):
+                             init_transform=None, verbose=False):
     """
     Perform colored ICP registration between source and target point clouds.
     
@@ -34,7 +34,7 @@ def colored_icp_registration(source, target, voxel_size, max_correspondence_dist
                 max_iteration=50))
         return result.transformation, result
     except Exception as e:
-        print(f"    ⚠ Colored ICP failed: {e}")
+        print(f"    ⚠ Colored ICP failed: {e}") if verbose else None
         return None, None
 
 
@@ -54,6 +54,7 @@ def full_registration(pcds_down_standard, voxel_size, max_correspondence_distanc
         min_fitness_loop: Minimum fitness for loop closure
         loop_closure_interval: Interval for attempting loop closures
         loop_closure_distance_threshold: Minimum frame distance for loop closure
+        verbose: Whether to print verbose output
         
     Returns:
         PoseGraph object
@@ -73,7 +74,7 @@ def full_registration(pcds_down_standard, voxel_size, max_correspondence_distanc
     # Consecutive frame registration
     for source_id in range(n_pcds - 1):
         target_id = source_id + 1
-        print(f"  Odometry {source_id} → {target_id} (colored ICP)", end=" ")
+        print(f"  Odometry {source_id} → {target_id} (colored ICP)", end=" ") if verbose else None
         
         # Compute initial transform from odometry if available
         init_transform = None
@@ -81,7 +82,7 @@ def full_registration(pcds_down_standard, voxel_size, max_correspondence_distanc
             T_source = initial_poses[source_id]
             T_target = initial_poses[target_id]
             init_transform = np.linalg.inv(T_source) @ T_target
-            print(f"[init from odom] ", end="")
+            print(f"[init from odom] ", end="") if verbose else None
         
         transformation, result = colored_icp_registration(
             pcds_down_standard[source_id], pcds_down_standard[target_id],

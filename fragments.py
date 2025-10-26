@@ -142,7 +142,8 @@ def build_local_fragment(colored_clouds, frag_range, odom_poses=None,
 
 
 def register_fragments(fragment_reps, voxel_size=VOXEL_SIZE, 
-                      max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE):
+                      max_correspondence_distance=MAX_CORRESPONDENCE_DISTANCE,
+                      verbose=False):
     """
     Register fragment representatives into a global pose graph.
     
@@ -163,7 +164,7 @@ def register_fragments(fragment_reps, voxel_size=VOXEL_SIZE,
     # Register neighboring fragments
     for i in range(len(fragment_reps) - 1):
         src, tgt = fragment_reps[i], fragment_reps[i+1]
-        print(f"  Frag {i}→{i+1} (colored ICP): ", end="")
+        print(f"  Frag {i}→{i+1} (colored ICP): ", end="") if verbose else None
         
         src_down = preprocess_point_cloud(src, voxel_size)
         tgt_down = preprocess_point_cloud(tgt, voxel_size)

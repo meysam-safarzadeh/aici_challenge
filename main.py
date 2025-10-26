@@ -25,7 +25,7 @@ from fragments import (split_into_fragments, build_local_fragment,
 def main():
     """Main reconstruction pipeline."""
     print("=" * 70)
-    print("FRAGMENT-BASED MULTIWAY REGISTRATION (Open3D-style)")
+    print("FRAGMENT-BASED MULTIWAY REGISTRATION")
     print("=" * 70)
     
     # Ensure output directories exist

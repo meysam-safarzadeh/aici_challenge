@@ -158,7 +158,7 @@ def create_colored_clouds(rgb_data, lidar_data, odom_data, K, dist, T_cam_lidar)
             odom_poses.append(T_rel)
             cloud_timestamps.append(rgb_t)
             
-            if (idx + 1) % 50 == 0:
+            if (idx + 1) % 200 == 0:
                 print(f"  Created {len(colored_clouds)} colored point clouds...")
     
     print(f"\n✓ Created {len(colored_clouds)} colored point clouds with initial odometry poses")

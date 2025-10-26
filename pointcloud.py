@@ -33,7 +33,13 @@ def parse_pointcloud2(msg: any) -> Optional[np.ndarray]:
     return np.array(points_list) if points_list else None
 
 
-def colorize_pointcloud(pts: np.ndarray, img_bgr: np.ndarray, K: np.ndarray, dist: np.ndarray, T_cam_lidar: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def colorize_pointcloud(
+    pts: np.ndarray,
+    img_bgr: np.ndarray,
+    K: np.ndarray,
+    dist: np.ndarray,
+    T_cam_lidar: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Project 3D points to image and assign colors.
     
@@ -83,7 +89,10 @@ def colorize_pointcloud(pts: np.ndarray, img_bgr: np.ndarray, K: np.ndarray, dis
     return valid_points, colors_rgb
 
 
-def preprocess_point_cloud(pcd: o3d.geometry.PointCloud, voxel_size: float) -> o3d.geometry.PointCloud:
+def preprocess_point_cloud(
+    pcd: o3d.geometry.PointCloud,
+    voxel_size: float
+) -> o3d.geometry.PointCloud:
     """
     Downsample and estimate normals for point cloud.
     
@@ -97,5 +106,6 @@ def preprocess_point_cloud(pcd: o3d.geometry.PointCloud, voxel_size: float) -> o
     pcd_down = pcd.voxel_down_sample(voxel_size)
     radius_normal = voxel_size * 2
     pcd_down.estimate_normals(
-        o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30))
+        o3d.geometry.KDTreeSearchParamHybrid(
+            radius=radius_normal, max_nn=30))
     return pcd_down

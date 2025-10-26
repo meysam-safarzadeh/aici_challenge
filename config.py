@@ -10,7 +10,7 @@ BAG_DIR = Path("/home/challenge_aici/office/rosbag2_2025_10_20-16_09_39")
 RGB_TOPIC = "/zed/zed_node/rgb/image_rect_color/compressed"
 LIDAR_TOPIC = "/livox/lidar"
 ODOM_TOPIC = "/odom"
-MAX_SAMPLES = 1000
+MAX_SAMPLES = 40000
 
 
 # ==== Fragmenting Parameters ====

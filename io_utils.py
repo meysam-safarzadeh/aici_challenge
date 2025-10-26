@@ -11,7 +11,10 @@ from pointcloud import parse_pointcloud2, colorize_pointcloud
 from transforms import pose_to_transform_matrix, compute_relative_transform
 
 
-def find_closest_timestamp(target_t: int, timestamp_dict: Dict[int, any]) -> Optional[int]:
+def find_closest_timestamp(
+    target_t: int,
+    timestamp_dict: Dict[int, any]
+) -> Optional[int]:
     """
     Find the closest timestamp in a dictionary.
     
@@ -28,7 +31,14 @@ def find_closest_timestamp(target_t: int, timestamp_dict: Dict[int, any]) -> Opt
     return closest_t
 
 
-def read_rosbag(bag_dir: Path, rgb_topic: str, lidar_topic: str, odom_topic: str, max_samples: int) -> Tuple[Dict[int, np.ndarray], Dict[int, np.ndarray], Dict[int, np.ndarray]]:
+def read_rosbag(
+    bag_dir: Path,
+    rgb_topic: str,
+    lidar_topic: str,
+    odom_topic: str,
+    max_samples: int
+) -> Tuple[Dict[int, np.ndarray], Dict[int, np.ndarray],
+           Dict[int, np.ndarray]]:
     """
     Read RGB images, LiDAR point clouds, and odometry from ROS2 bag.
     
@@ -40,7 +50,8 @@ def read_rosbag(bag_dir: Path, rgb_topic: str, lidar_topic: str, odom_topic: str
         max_samples: Maximum number of samples to read
         
     Returns:
-        Tuple of (rgb_data, lidar_data, odom_data) as dictionaries keyed by timestamp
+        Tuple of (rgb_data, lidar_data, odom_data) as dictionaries
+        keyed by timestamp
     """
     print("\nReading ROS2 bag...")
     typestore = get_typestore(Stores.ROS2_HUMBLE)
@@ -68,7 +79,8 @@ def read_rosbag(bag_dir: Path, rgb_topic: str, lidar_topic: str, odom_topic: str
         print("Extracting messages from bag...")
         for conn, t, raw in reader.messages(connections=all_conns):
             if len(lidar_data) >= max_samples:
-                print(f"Reached maximum of {max_samples} point clouds, stopping extraction...")
+                print(f"Reached maximum of {max_samples} point clouds, "
+                      f"stopping extraction...")
                 break
                 
             if conn.topic == rgb_topic:
@@ -96,13 +108,21 @@ def read_rosbag(bag_dir: Path, rgb_topic: str, lidar_topic: str, odom_topic: str
                 if len(odom_data) % 200 == 0:
                     print(f"  Odometry messages: {len(odom_data)}")
     
-    print(f"\nCollected {len(rgb_data)} RGB frames, {len(lidar_data)} point clouds, "
+    print(f"\nCollected {len(rgb_data)} RGB frames, "
+          f"{len(lidar_data)} point clouds, "
           f"and {len(odom_data)} odometry messages")
     
     return rgb_data, lidar_data, odom_data
 
 
-def create_colored_clouds(rgb_data: Dict[int, np.ndarray], lidar_data: Dict[int, np.ndarray], odom_data: Dict[int, np.ndarray], K: np.ndarray, dist: np.ndarray, T_cam_lidar: np.ndarray) -> Tuple[List[o3d.geometry.PointCloud], List[np.ndarray], List[int]]:
+def create_colored_clouds(
+    rgb_data: Dict[int, np.ndarray],
+    lidar_data: Dict[int, np.ndarray],
+    odom_data: Dict[int, np.ndarray],
+    K: np.ndarray,
+    dist: np.ndarray,
+    T_cam_lidar: np.ndarray
+) -> Tuple[List[o3d.geometry.PointCloud], List[np.ndarray], List[int]]:
     """
     Create colored point clouds from RGB and LiDAR data with odometry.
     
@@ -134,7 +154,8 @@ def create_colored_clouds(rgb_data: Dict[int, np.ndarray], lidar_data: Dict[int,
         
         closest_odom_t = find_closest_timestamp(rgb_t, odom_data)
         if closest_odom_t is None:
-            print(f"Skipping RGB frame at t={rgb_t}: no odometry available")
+            print(f"Skipping RGB frame at t={rgb_t}: "
+                  f"no odometry available")
             continue
         
         # Set origin pose from first odometry
@@ -144,7 +165,8 @@ def create_colored_clouds(rgb_data: Dict[int, np.ndarray], lidar_data: Dict[int,
             print(f"Set origin pose from odometry at t={first_odom_t}")
         
         points = lidar_data[closest_lidar_t]
-        valid_points, colors = colorize_pointcloud(points, img_bgr, K, dist, T_cam_lidar)
+        valid_points, colors = colorize_pointcloud(
+            points, img_bgr, K, dist, T_cam_lidar)
         
         if len(valid_points) > 100:
             pcd = o3d.geometry.PointCloud()
@@ -161,13 +183,18 @@ def create_colored_clouds(rgb_data: Dict[int, np.ndarray], lidar_data: Dict[int,
             cloud_timestamps.append(rgb_t)
             
             if (idx + 1) % 200 == 0:
-                print(f"  Created {len(colored_clouds)} colored point clouds...")
+                print(f"  Created {len(colored_clouds)} "
+                      f"colored point clouds...")
     
-    print(f"\n✓ Created {len(colored_clouds)} colored point clouds with initial odometry poses")
+    print(f"\n✓ Created {len(colored_clouds)} colored point clouds "
+          f"with initial odometry poses")
     return colored_clouds, odom_poses, cloud_timestamps
 
 
-def save_point_cloud(pcd: o3d.geometry.PointCloud, filepath: Path) -> None:
+def save_point_cloud(
+    pcd: o3d.geometry.PointCloud,
+    filepath: Path
+) -> None:
     """
     Save point cloud to PLY file.
     

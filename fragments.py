@@ -10,7 +10,13 @@ from transforms import is_valid_transformation
 from config import VOXEL_SIZE, MAX_CORRESPONDENCE_DISTANCE
 
 
-def split_into_fragments(n: int, frag_size: int, overlap: int, timestamps: Optional[List[int]] = None, gap_threshold_ns: float = 1e9) -> List[Tuple[int, int]]:
+def split_into_fragments(
+    n: int,
+    frag_size: int,
+    overlap: int,
+    timestamps: Optional[List[int]] = None,
+    gap_threshold_ns: float = 1e9
+) -> List[Tuple[int, int]]:
     """
     Split data into overlapping fragments, optionally detecting time gaps.
     
@@ -46,17 +52,21 @@ def split_into_fragments(n: int, frag_size: int, overlap: int, timestamps: Optio
         time_gap = timestamps[i] - timestamps[i-1]
         if time_gap > gap_threshold_ns:
             segments.append((seg_start, i))
-            print(f"  ⏱ Time gap detected at index {i-1}→{i}: {time_gap/1e9:.2f}s")
+            gap_sec = time_gap / 1e9
+            print(f"  ⏱ Time gap detected at index {i-1}→{i}: "
+                  f"{gap_sec:.2f}s")
             seg_start = i
     
     segments.append((seg_start, n))
-    print(f"  Split into {len(segments)} continuous segments based on time gaps")
+    print(f"  Split into {len(segments)} continuous segments "
+          f"based on time gaps")
     
     # Split each segment into fragments with overlap
     ranges = []
     for seg_idx, (seg_start, seg_end) in enumerate(segments):
         seg_len = seg_end - seg_start
-        print(f"  Segment {seg_idx}: indices [{seg_start}:{seg_end}) with {seg_len} frames")
+        print(f"  Segment {seg_idx}: indices [{seg_start}:{seg_end}) "
+              f"with {seg_len} frames")
         
         start = seg_start
         while start < seg_end:
@@ -73,7 +83,12 @@ def split_into_fragments(n: int, frag_size: int, overlap: int, timestamps: Optio
     return ranges
 
 
-def fuse_fragment(colored_clouds: List[o3d.geometry.PointCloud], nodes_poses: List[np.ndarray], frag_range: Tuple[int, int], voxel_merge: float = 0.02) -> o3d.geometry.PointCloud:
+def fuse_fragment(
+    colored_clouds: List[o3d.geometry.PointCloud],
+    nodes_poses: List[np.ndarray],
+    frag_range: Tuple[int, int],
+    voxel_merge: float = 0.02
+) -> o3d.geometry.PointCloud:
     """
     Transform and merge point clouds within a fragment.
     
@@ -101,10 +116,18 @@ def fuse_fragment(colored_clouds: List[o3d.geometry.PointCloud], nodes_poses: Li
     return merged
 
 
-def build_local_fragment(colored_clouds: List[o3d.geometry.PointCloud], frag_range: Tuple[int, int], odom_poses: Optional[List[np.ndarray]] = None, 
-                        voxel_size: float = VOXEL_SIZE, 
-                        max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
-                        verbose: bool = False) -> Tuple[o3d.geometry.PointCloud, List[o3d.geometry.PointCloud], o3d.pipelines.registration.PoseGraph]:
+def build_local_fragment(
+    colored_clouds: List[o3d.geometry.PointCloud],
+    frag_range: Tuple[int, int],
+    odom_poses: Optional[List[np.ndarray]] = None,
+    voxel_size: float = VOXEL_SIZE,
+    max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
+    verbose: bool = False
+) -> Tuple[
+    o3d.geometry.PointCloud,
+    List[o3d.geometry.PointCloud],
+    o3d.pipelines.registration.PoseGraph
+]:
     """
     Build a single fragment with local pose graph optimization.
     
@@ -120,7 +143,8 @@ def build_local_fragment(colored_clouds: List[o3d.geometry.PointCloud], frag_ran
     """
     frag_start, frag_end = frag_range
     sub = colored_clouds[frag_start:frag_end]
-    print(f"\n==== Building fragment [{frag_start}:{frag_end}) with {len(sub)} frames ====")
+    print(f"\n==== Building fragment [{frag_start}:{frag_end}) "
+          f"with {len(sub)} frames ====")
     
     # Preprocess point clouds
     pcds_std = [preprocess_point_cloud(p, voxel_size) for p in sub]
@@ -131,21 +155,27 @@ def build_local_fragment(colored_clouds: List[o3d.geometry.PointCloud], frag_ran
         initial_poses = odom_poses[frag_start:frag_end]
     
     # Local registration with colored ICP
-    local_pg = full_registration(pcds_std, voxel_size, max_correspondence_distance, 
-                                 initial_poses, verbose)
-    local_pg = optimize_pose_graph(local_pg, max_correspondence_distance, 
-                                   preference_loop_closure=0.7)
+    local_pg = full_registration(
+        pcds_std, voxel_size, max_correspondence_distance,
+        initial_poses, verbose)
+    local_pg = optimize_pose_graph(
+        local_pg, max_correspondence_distance,
+        preference_loop_closure=0.7)
     
     # Extract local poses and fuse fragment
     local_poses = [node.pose for node in local_pg.nodes]
-    fragment_cloud = fuse_fragment(colored_clouds, local_poses, frag_range, voxel_merge=0.02)
+    fragment_cloud = fuse_fragment(
+        colored_clouds, local_poses, frag_range, voxel_merge=0.02)
     
     return fragment_cloud, pcds_std, local_pg
 
 
-def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size: float = VOXEL_SIZE, 
-                      max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
-                      verbose: bool = False) -> o3d.pipelines.registration.PoseGraph:
+def register_fragments(
+    fragment_reps: List[o3d.geometry.PointCloud],
+    voxel_size: float = VOXEL_SIZE,
+    max_correspondence_distance: float = MAX_CORRESPONDENCE_DISTANCE,
+    verbose: bool = False
+) -> o3d.pipelines.registration.PoseGraph:
     """
     Register fragment representatives into a global pose graph.
     
@@ -157,7 +187,8 @@ def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size:
     Returns:
         Global fragment-level PoseGraph
     """
-    print(f"==== Fragment-level registration of {len(fragment_reps)} reps (Colored ICP) ====")
+    print(f"==== Fragment-level registration of {len(fragment_reps)} "
+          f"reps (Colored ICP) ====")
     
     pg = o3d.pipelines.registration.PoseGraph()
     odom = np.identity(4)
@@ -166,7 +197,8 @@ def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size:
     # Register neighboring fragments
     for i in range(len(fragment_reps) - 1):
         src, tgt = fragment_reps[i], fragment_reps[i+1]
-        print(f"  Frag {i}→{i+1} (colored ICP): ", end="") if verbose else None
+        if verbose:
+            print(f"  Frag {i}→{i+1} (colored ICP): ", end="")
         
         src_down = preprocess_point_cloud(src, voxel_size)
         tgt_down = preprocess_point_cloud(tgt, voxel_size)
@@ -176,28 +208,36 @@ def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size:
         
         if T_refined is not None and result is not None:
             fitness = result.fitness
-            if not is_valid_transformation(T_refined, max_translation=800.0, 
-                                          max_rotation_deg=600.0):
-                print(f"✗ invalid transform → identity edge") if verbose else None
+            if not is_valid_transformation(
+                    T_refined, max_translation=800.0,
+                    max_rotation_deg=600.0):
+                if verbose:
+                    print("✗ invalid transform → identity edge")
                 T_refined = np.eye(4)
                 info = np.identity(6) * 0.001
                 uncertain = True
             elif fitness < 0.2:
-                print(f"✗ low fitness={fitness:.3f} → weak edge") if verbose else None
+                if verbose:
+                    print(f"✗ low fitness={fitness:.3f} → weak edge")
                 info = np.identity(6) * 0.1
                 uncertain = True
             else:
-                print(f"✓ fitness={fitness:.3f}, rmse={result.inlier_rmse:.3f}") if verbose else None
+                if verbose:
+                    print(f"✓ fitness={fitness:.3f}, "
+                          f"rmse={result.inlier_rmse:.3f}")
                 info = np.identity(6) * min(fitness * 2.0, 1.0)
                 uncertain = False
         else:
-            print(f"✗ registration failed → identity edge") if verbose else None
+            if verbose:
+                print("✗ registration failed → identity edge")
             T_refined = np.eye(4)
             info = np.identity(6) * 0.001
             uncertain = True
         
         odom = T_refined @ odom
-        pg.nodes.append(o3d.pipelines.registration.PoseGraphNode(np.linalg.inv(odom)))
+        pg.nodes.append(
+            o3d.pipelines.registration.PoseGraphNode(
+                np.linalg.inv(odom)))
         pg.edges.append(o3d.pipelines.registration.PoseGraphEdge(
             i, i+1, T_refined, information=info, uncertain=uncertain))
     
@@ -217,18 +257,28 @@ def register_fragments(fragment_reps: List[o3d.geometry.PointCloud], voxel_size:
             if T is not None and result is not None:
                 fitness = result.fitness
                 if fitness > 0.15 and is_valid_transformation(
-                        T, max_translation=1500.0, max_rotation_deg=900.0):
+                        T, max_translation=1500.0,
+                        max_rotation_deg=900.0):
                     info_weight = min(fitness, 0.8)
-                    pg.edges.append(o3d.pipelines.registration.PoseGraphEdge(
-                        i, j, T, information=np.identity(6) * info_weight, uncertain=True))
+                    pg.edges.append(
+                        o3d.pipelines.registration.PoseGraphEdge(
+                            i, j, T,
+                            information=np.identity(6) * info_weight,
+                            uncertain=True))
                     loop_added += 1
-                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✓") if verbose else None
+                    if verbose:
+                        print(f"    Loop {i}→{j}: "
+                              f"fitness={fitness:.3f} ✓")
                 else:
-                    print(f"    Loop {i}→{j}: fitness={fitness:.3f} ✗") if verbose else None
+                    if verbose:
+                        print(f"    Loop {i}→{j}: "
+                              f"fitness={fitness:.3f} ✗")
             else:
-                print(f"    Loop {i}→{j}: registration failed ✗") if verbose else None
+                if verbose:
+                    print(f"    Loop {i}→{j}: registration failed ✗")
 
     print(f"  Added {loop_added} loop closure edges")
-    pg = optimize_pose_graph(pg, max_correspondence_distance, 
-                            preference_loop_closure=2)
+    pg = optimize_pose_graph(
+        pg, max_correspondence_distance,
+        preference_loop_closure=2)
     return pg

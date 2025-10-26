@@ -3,7 +3,12 @@
 import numpy as np
 
 
-def quaternion_to_rotation_matrix(qx: float, qy: float, qz: float, qw: float) -> np.ndarray:
+def quaternion_to_rotation_matrix(
+    qx: float,
+    qy: float,
+    qz: float,
+    qw: float
+) -> np.ndarray:
     """
     Convert quaternion to 3x3 rotation matrix.
     
@@ -19,14 +24,20 @@ def quaternion_to_rotation_matrix(qx: float, qy: float, qz: float, qw: float) ->
     
     # Compute rotation matrix
     R = np.array([
-        [1 - 2*(qy**2 + qz**2),     2*(qx*qy - qw*qz),     2*(qx*qz + qw*qy)],
-        [    2*(qx*qy + qw*qz), 1 - 2*(qx**2 + qz**2),     2*(qy*qz - qw*qx)],
-        [    2*(qx*qz - qw*qy),     2*(qy*qz + qw*qx), 1 - 2*(qx**2 + qy**2)]
+        [1 - 2*(qy**2 + qz**2), 2*(qx*qy - qw*qz),
+         2*(qx*qz + qw*qy)],
+        [2*(qx*qy + qw*qz), 1 - 2*(qx**2 + qz**2),
+         2*(qy*qz - qw*qx)],
+        [2*(qx*qz - qw*qy), 2*(qy*qz + qw*qx),
+         1 - 2*(qx**2 + qy**2)]
     ])
     return R
 
 
-def pose_to_transform_matrix(position: any, orientation: any) -> np.ndarray:
+def pose_to_transform_matrix(
+    position: any,
+    orientation: any
+) -> np.ndarray:
     """
     Convert position and quaternion orientation to 4x4 transform matrix.
     
@@ -38,7 +49,8 @@ def pose_to_transform_matrix(position: any, orientation: any) -> np.ndarray:
         4x4 transformation matrix
     """
     x, y, z = position.x, position.y, position.z
-    qx, qy, qz, qw = orientation.x, orientation.y, orientation.z, orientation.w
+    qx, qy, qz, qw = (orientation.x, orientation.y,
+                      orientation.z, orientation.w)
     
     T = np.eye(4)
     T[:3, :3] = quaternion_to_rotation_matrix(qx, qy, qz, qw)
@@ -47,7 +59,10 @@ def pose_to_transform_matrix(position: any, orientation: any) -> np.ndarray:
     return T
 
 
-def compute_relative_transform(T_current: np.ndarray, T_origin: np.ndarray) -> np.ndarray:
+def compute_relative_transform(
+    T_current: np.ndarray,
+    T_origin: np.ndarray
+) -> np.ndarray:
     """
     Compute relative transform from origin to current pose.
     
@@ -63,9 +78,14 @@ def compute_relative_transform(T_current: np.ndarray, T_origin: np.ndarray) -> n
     return T_rel
 
 
-def is_valid_transformation(transformation: np.ndarray, max_translation: float = 2.0, max_rotation_deg: float = 45.0) -> bool:
+def is_valid_transformation(
+    transformation: np.ndarray,
+    max_translation: float = 2.0,
+    max_rotation_deg: float = 45.0
+) -> bool:
     """
-    Validate transformation for reasonable translation and rotation bounds.
+    Validate transformation for reasonable translation and rotation
+    bounds.
     
     Args:
         transformation: 4x4 transformation matrix

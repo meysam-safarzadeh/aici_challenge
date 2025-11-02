@@ -34,10 +34,10 @@ The extrinsic transform was calculated from the `/tf_static` topic in the ROS2 b
 Since most rotations in the sensor chain are identity matrices (except for the camera→optical conversion), the transform chain simplifies as follows:
 
 ```
-base ← livox:        R = I,  t = [0.000,  0.000,  0.215]
-base ← zed_link:     R = I,  t = [0.099,  0.000,  0.180]
-base ← center:       R = I,  t = [0.000,  0.000, +0.015]  (offset)
-base ← left_frame:   R = I,  t = [-0.010, 0.060,  0.000]  (offset)
+base ← livox:            R = I,  t = [0.000,  0.000,  0.215]
+base ← zed_link:         R = I,  t = [0.099,  0.000,  0.180]
+zed_link ← center:       R = I,  t = [0.000,  0.000, +0.015]  (offset)
+center ← left_frame:     R = I,  t = [-0.010, 0.060,  0.000]  (offset)
 left_frame ← left_optical:   q = (0.5, -0.5, 0.5, -0.5)  (90° rotations)
 ```
 
